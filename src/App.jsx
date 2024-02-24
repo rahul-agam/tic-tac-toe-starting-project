@@ -3,13 +3,25 @@ import Player from "./Components/Player.jsx";
 import GameBoard from "./Components/GameBoard.jsx";
 import Log from "./Components/Log.jsx";
 
+// outside the App, because this function
+// It doesn't need any access to state varaiables
+// And should not be recreated when the component function re-executes
+function deriveActivePlayer(gameTurns) {
+  let currentPlayer = "X";
+  if (gameTurns.length > 0 && gameTurns[0].player === "X") {
+    currentPlayer = "O";
+  }
+  return currentPlayer;
+}
+
 function App() {
   // Making player with symbol 'X' as default active player
   // Concept of Lifting State Up (used in both Player & GameBoard components)
-  const [activePlayer, setActivePlayer] = useState("X");
+  // const [activePlayer, setActivePlayer] = useState("X");
 
   // Concept of Lifting State Up (used in both Log & GameBoard components)
   const [gameTurns, setGameTurns] = useState([]);
+  const activePlayer = deriveActivePlayer(gameTurns);
 
   function handleSelectSquare(rowIndex, colIndex) {
     /*
@@ -17,28 +29,24 @@ function App() {
       active player is 'O' and again then 'X'.
       So, currentValue depends on Previous value. So, use a function inside the setActivePlayer();
     */
-    setActivePlayer((curActivePlayer) => (curActivePlayer === "X" ? "O" : "X"));
+    //setActivePlayer((curActivePlayer) => (curActivePlayer === "X" ? "O" : "X"));
 
     setGameTurns((prevTurns) => {
-
       /* Not using the state variable 'activePlayer' here to track the current plyaer, because we are already in a state function for 'gameTurns' , so we cannot gurantee that we get the latest 'activePlayer' here. Because they both are two different state variables. */
 
-      let currentPlayer = 'X';
-
-      // here it is prevTurns[0] - because we should always see the latest player.
-      // if latest player has 'X' then next player should have 'O'
-      if (prevTurns.length > 0 && prevTurns[0].player === 'X') {
-        currentPlayer = 'O';
-      }
+      const currentPlayer = deriveActivePlayer(prevTurns);
 
       // Since we are dealing with array, we use immutable state update approach.
-      const updatedTurns = [{
-        square: { row: rowIndex, col: colIndex },
-        player: currentPlayer
-      }, ...prevTurns];
+      const updatedTurns = [
+        {
+          square: { row: rowIndex, col: colIndex },
+          player: currentPlayer,
+        },
+        ...prevTurns,
+      ];
 
       return updatedTurns;
-    })
+    });
   }
   return (
     <main>
@@ -55,10 +63,7 @@ function App() {
             isActive={activePlayer === "O"}
           />
         </ol>
-        <GameBoard
-          onSelectSquare={handleSelectSquare}
-          turns={gameTurns}
-        />
+        <GameBoard onSelectSquare={handleSelectSquare} turns={gameTurns} />
       </div>
       <div id="log-container">
         <Log turns={gameTurns} />
