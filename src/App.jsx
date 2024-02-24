@@ -14,11 +14,10 @@ function App() {
 
       So, currentValue depends on Previous value. So, use a function inside the setActivePlayer();
     */
-    setActivePlayer((curActivePlayer) => {
-      curActivePlayer === "X" ? "O" : "X";
-    });
+    setActivePlayer((curActivePlayer) => (curActivePlayer === "X" ? "O" : "X"));
+    console.log("Current Active Player inside func : ", activePlayer);
   }
-
+  console.log("Current Active Player outside fun : ", activePlayer);
   return (
     <main>
       <div id="game-container">
