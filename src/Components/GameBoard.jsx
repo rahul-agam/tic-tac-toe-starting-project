@@ -1,12 +1,4 @@
-import { useState } from "react";
-
-const initialGameBoard = [
-  [null, null, null],
-  [null, null, null],
-  [null, null, null],
-];
-
-export default function GameBoard({ onSelectSquare, turns }) {
+export default function GameBoard({ onSelectSquare, board }) {
   /*
   We are managing this state in App.jsx file.
   ---------------------------------------------------------------------------------------
@@ -37,21 +29,10 @@ export default function GameBoard({ onSelectSquare, turns }) {
     }
   ---------------------------------------------------------------------------------------
   */
-
-  let gameBoard = initialGameBoard;
-
-  for (const turn of turns) {
-    // We get the square selected by the player & his symbol.
-    const { square, player } = turn;
-    const { row, col } = square;
-
-    gameBoard[row][col] = player;
-  }
-
   // To print the Game board (9 squares)
   return (
     <ol id="game-board">
-      {gameBoard.map((row, rowIndex) => (
+      {board.map((row, rowIndex) => (
         <li key={rowIndex}>
           <ol>
             {row.map((playerSymbol, colIndex) => (
